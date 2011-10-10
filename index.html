@@ -55,8 +55,10 @@
         this.el.css('left', x + 'px');
         return this;
       },
-      wait: function(callback) {
+      wait: function(callback, delay) {
         if (!callback) return this;
+        if (delay)
+          this.el.delay(delay);
         this.el.queue(function() {
           callback();
           $(this).dequeue();
@@ -96,10 +98,8 @@
       },
       refresh: function() {
         var self = this;
-        _.delay(function() {
-          self.donations.fetch({success: function() {
-            if (self.donations.length == 0) return;
-            
+        this.donations.fetch({success: function() {
+          if (self.donations.length > 0) {
             Mario.reset().runTo(Box.el);
             self.donations.each(function(donation) {
               Mario.jump(function() {
@@ -108,11 +108,12 @@
                 self.addToScore(amount);
               });
             });
-            Mario.runTo($('body').width()).wait(function() {
-              Stage.refresh();
-            });
-          }}, 30000);
-        })
+            Mario.runTo($('body').width());
+          }
+          Mario.wait(function() {
+            Stage.refresh();
+          }, 30000);
+        }});
       }
     }
     
