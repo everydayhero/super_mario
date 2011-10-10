@@ -20,6 +20,10 @@ body {
   -moz-animation-name: sidescroll;
   -moz-animation-iteration-count: infinite;
   -moz-animation-timing-function: linear;
+  -webkit-animation-duration: 50s;
+  -webkit-animation-name: sidescroll;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
 }
 span.coin {
   background: url(../images/coin.gif);
@@ -39,7 +43,9 @@ span.coin {
   left: 50%;
   position: absolute;
   width: 16px;
+  transition: margin-bottom 100ms;
   -moz-transition: margin-bottom 100ms;
+  -webkit-transition: margin-bottom 100ms;
 }
 #box::after {
   background: url(../images/coinbox.gif);
@@ -75,6 +81,15 @@ span.coin {
 }
 
 @-moz-keyframes sidescroll {
+  from {
+    background-position: 0 10%, 50% 100%;
+  }
+  to {
+    background-position: -387px 10%, 50% 100%;
+  }
+}
+
+@-webkit-keyframes sidescroll {
   from {
     background-position: 0 10%, 50% 100%;
   }

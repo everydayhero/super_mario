@@ -2,7 +2,7 @@ var Donation = Backbone.Model.extend({});
   
 var Donations = Backbone.Collection.extend({
   model: Donation,
-  url: 'https://x:x8@heroix.everydayhero.com.au/api/v1/donations.json?callback=?',
+  url: 'https://x:x@heroix.everydayhero.com.au/api/v1/donations.json?callback=?',
   comparator: function(donation) {
     return donation.get('id');
   },
