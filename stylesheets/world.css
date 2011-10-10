@@ -1,0 +1,84 @@
+@font-face {
+  font-family: 'bitlow';
+  src: url(../fonts/bitlow.ttf);
+}
+
+html, body {
+  background: #5c94fc;
+  height: 100%;
+  margin: 0;
+}
+body {
+  background-image: url(../images/clouds.gif), url(../images/ground.gif);
+  background-position: 0 10%, 50% 100%;
+  background-repeat: repeat-x;
+  color: #fff;
+  font: 8px 'bitlow',monospace;
+  overflow: hidden;
+  text-shadow: #000 1px 1px 0;
+  -moz-animation-duration: 50s;
+  -moz-animation-name: sidescroll;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+}
+span.coin {
+  background: url(../images/coin.gif);
+  height: 14px;
+  left: 50%;
+  line-height: 14px;
+  margin-left: -5px;
+  position: absolute;
+  text-indent: 20px;
+  top: 0;
+  vertical-align: middle;
+  width: 10px;
+}
+#box {
+  bottom: 68px;
+  height: 16px;
+  left: 50%;
+  position: absolute;
+  width: 16px;
+  -moz-transition: margin-bottom 100ms;
+}
+#box::after {
+  background: url(../images/coinbox.gif);
+  content: '';
+  height: 16px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 16px;
+}
+#box.hit {
+  margin-bottom: 2px;
+}
+#mario {
+  background: url(../images/mario.gif) no-repeat;
+  bottom: 17px;
+  height: 16px;
+  left: -17px;
+  position: absolute;
+  width: 17px;
+}
+#mario.running {
+  background-position: 0 -16px;
+}
+#mario.jumping {
+  background-position: -17px 0;
+}
+#scoreboard {
+  font-size: 10px;
+  position: absolute;
+  right: 4px;
+  top: 4px;
+}
+
+@-moz-keyframes sidescroll {
+  from {
+    background-position: 0 10%, 50% 100%;
+  }
+  to {
+    background-position: -387px 10%, 50% 100%;
+  }
+}

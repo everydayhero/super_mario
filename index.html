@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Super Mario Donation</title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/world.css">
+    <script src="javascripts/jquery.js"></script>
+    <script src="javascripts/underscore.js"></script>
+    <script src="javascripts/backbone.js"></script>
+    <script src="javascripts/donation.js"></script>
+  </head>
+  <body>
+    <div id="scoreboard"></div>
+    <div id="mario" class="running"></div>
+    <div id="box"></div>
+    <script type="text/javascript">
+    var Box = {
+      el: $('#box'),
+      hit: function(msg) {
+        this.el.queue(function() {
+          $('<span class="coin" />').text(msg || '').appendTo(this).animate({top: '-50px'}, 400, function() {
+            $(this).remove();
+          });
+          $(this).addClass('hit').dequeue();
+        }).delay(50).queue(function() {
+          $(this).removeClass('hit').dequeue();
+        });
+      }
+    }
+    var Mario = {
+      el: $('#mario'),
+      jump: function(callback) {
+        var boxBase = (this.el.position().top + this.el.height()) - (Box.el.position().top + Box.el.height()) + 1 + 'px',
+            bottom = this.el.css('bottom');
+        this.el.queue(function() {
+          $(this).addClass('jumping').dequeue();
+        }).animate({bottom: '+' + boxBase}, 200)
+        this.wait(callback);
+        this.el.animate({bottom: bottom}, 200, function() {
+          $(this).removeClass('jumping');
+        });
+        return this;
+      },
+      runTo: function(dst) {
+        if (typeof dst == 'object')
+          dst = $(dst).position().left + ($(dst).width() / 2) - (this.el.width() / 2);
+        var time = Math.abs(dst - this.el.position().left) * 4;
+        this.el.queue(function() {
+          $(this).addClass('running').dequeue();
+        }).animate({left: dst + 'px'}, time, function() {
+          $(this).removeClass('running');
+        });
+        return this;
+      },
+      moveTo: function(x) {
+        this.el.css('left', x + 'px');
+        return this;
+      },
+      wait: function(callback) {
+        if (!callback) return this;
+        this.el.queue(function() {
+          callback();
+          $(this).dequeue();
+        });
+        return this;
+      },
+      reset: function() {
+        return this.moveTo(-this.el.width());
+      },
+      runAndHitBox: function(times) {
+        this.reset().runTo(Box.el);
+        for (var i = 0; i < times; ++i)
+          this.jump(function() {
+            Box.hit();
+          });
+        this.runTo($('body').width());
+        return this;
+      }
+    }
+    var Stage = {
+      donations: new Donations(),
+      score: 0.0,
+      scoreboard: $('#scoreboard'),
+      addToScore: function(amount) {
+        var self = this, i = parseInt(amount), r = amount - i, time = 2 * (i / this.score);
+        for (; i > 0; --i) {
+          var t = i;
+          this.scoreboard.queue(function() {
+            self.score += t;
+            $(this).text('$' + self.score).dequeue();
+          }).delay(time);
+        }
+        this.scoreboard.queue(function() {
+          self.score += r;
+          $(this).text('$' + self.score).dequeue();
+        });
+      },
+      refresh: function() {
+        var self = this;
+        _.delay(function() {
+          self.donations.fetch({success: function() {
+            if (self.donations.length == 0) return;
+            
+            Mario.reset().runTo(Box.el);
+            self.donations.each(function(donation) {
+              Mario.jump(function() {
+                var amount = donation.get('amount');
+                Box.hit(amount);
+                self.addToScore(amount);
+              });
+            });
+            Mario.runTo($('body').width()).wait(function() {
+              Stage.refresh();
+            });
+          }}, 30000);
+        })
+      }
+    }
+    
+    $(function() {
+      Stage.refresh();
+    })
+    </script>
+  </body>
+</html>
